@@ -1,6 +1,30 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import './App.css';
-
+import axios from 'axios';
+function handleGagnerClick() {
+  axios.get('http://localhost:3000/gagner') // Appeler la route '/gagner'
+    .then(response => {
+      console.log(response.data); // Afficher la réponse dans la console
+      // Vous pouvez effectuer d'autres actions si nécessaire
+    })
+    .catch(error => {
+      console.error('Erreur lors de la requête GET vers /gagner : ', error);
+    });
+}
+function handleWinClick(winner) {
+  axios.get('http://localhost:3000/win', {
+    params: {
+      winner: winner // Envoyer le gagnant au backend
+    }
+  })
+  .then(response => {
+    console.log(response.data); // Afficher la réponse dans la console
+    // Vous pouvez effectuer d'autres actions si nécessaire
+  })
+  .catch(error => {
+    console.error('Erreur lors de la requête GET vers /gagner : ', error);
+  });
+}
 function Square({ value, onClick }) {
   return (
     <button className="square" onClick={onClick}>
@@ -15,7 +39,13 @@ export default function Board() {
   const winner=calculateWinner(squares);
   let status;
   if(winner){
+    handleGagnerClick();
+    handleWinClick(winner);
     status="winner "+winner;
+    setTimeout(() => {
+      setSquares(Array(9).fill(null));
+      setXIsNext(true);
+    }, 5000);
   }
   else{
     status= "Next player: " + (xIsNext ? "X" : "O");
